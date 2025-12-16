@@ -67,75 +67,50 @@
 </div>
 
 <script>
-    // 你的 Supabase 配置
-    const SUPABASE_URL = 'https://bwbohtprwnegbunrxnyj.supabase.co';
-    const SUPABASE_KEY = 'sb_secret_eX7QAnN2MDxWZ6OHD8lRrQ_9FODCq83';
+  const SUPABASE_URL = 'https://bwbohtprwnegbunrxnyj.supabase.co';
+  const SUPABASE_KEY = 'sb_secret_eX7QAnN2MDxWZ6OHD8lRrQ_9FODCq83'; // 用 public anon key
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function handleConfirmation() {
-        try {
-            // 1. 获取 URL 中的参数
-            const urlParams = new URLSearchParams(window.location.search);
-            const token = urlParams.get('token') || urlParams.get('code');
-            const type = urlParams.get('type') || 'signup';
+  async function handleConfirmation() {
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('result').style.display = 'none';
 
-            console.log('参数:', { token, type });
+    try {
+      const { data, error } = await supabase.auth.getSessionFromUrl({ storeSession: true });
 
-            if (!token) {
-                throw new Error('缺少验证参数');
-            }
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
 
-            // 2. 创建 Supabase 客户端
-            const { createClient } = supabase;
-            const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-            // 3. 验证邮箱
-            const { data, error } = await supabaseClient.auth.verifyOtp({
-                token_hash: token,
-                type: type
-            });
-
-            // 4. 显示结果
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('result').style.display = 'block';
-
-            if (error) {
-                // 验证失败
-                document.getElementById('icon').innerHTML = '<div class="error">❌</div>';
-                document.getElementById('message').textContent = '验证失败';
-                document.getElementById('details').textContent = error.message || '验证链接无效或已过期';
-                document.getElementById('retryBtn').style.display = 'inline-block';
-            } else {
-                // 验证成功
-                document.getElementById('icon').innerHTML = '<div class="success">✅</div>';
-                document.getElementById('message').textContent = '邮箱验证成功！';
-                document.getElementById('details').textContent = '您的 MoodBox 账户已激活。';
-
-                // 显示跳转按钮
-                const redirectBtn = document.getElementById('redirectBtn');
-                redirectBtn.style.display = 'inline-block';
-                redirectBtn.href = 'https://apps.apple.com/app/id6755515595';  // 应用地址
-                redirectBtn.textContent = '前往 MoodBox';
-
-                // 5秒后自动跳转
-                setTimeout(() => {
-                    window.location.href = 'https://apps.apple.com/app/id6755515595';
-                }, 5000);
-            }
-
-        } catch (error) {
-            // 处理错误
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('result').style.display = 'block';
-            document.getElementById('icon').innerHTML = '<div class="error">❌</div>';
-            document.getElementById('message').textContent = '出错了';
-            document.getElementById('details').textContent = error.message || '请重试或联系支持';
-            document.getElementById('retryBtn').style.display = 'inline-block';
-        }
+      if (error) {
+        document.getElementById('icon').innerHTML = '<div class="error">❌</div>';
+        document.getElementById('message').textContent = '验证失败';
+        document.getElementById('details').textContent = error.message || '验证链接无效或已过期';
+        document.getElementById('retryBtn').style.display = 'inline-block';
+      } else {
+        document.getElementById('icon').innerHTML = '<div class="success">✅</div>';
+        document.getElementById('message').textContent = '邮箱验证成功！';
+        document.getElementById('details').textContent = '您的 MoodBox 账户已激活。';
+        const redirectBtn = document.getElementById('redirectBtn');
+        redirectBtn.style.display = 'inline-block';
+        redirectBtn.href = 'https://apps.apple.com/app/id6755515595';
+        redirectBtn.textContent = '前往 MoodBox';
+        setTimeout(() => {
+          window.location.href = 'https://apps.apple.com/app/id6755515595';
+        }, 5000);
+      }
+    } catch (err) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+      document.getElementById('icon').innerHTML = '<div class="error">❌</div>';
+      document.getElementById('message').textContent = '出错了';
+      document.getElementById('details').textContent = err.message || '请重试或联系支持';
+      document.getElementById('retryBtn').style.display = 'inline-block';
     }
+  }
 
-    // 页面加载完成后执行
-    window.addEventListener('load', handleConfirmation);
+  window.addEventListener('load', handleConfirmation);
 </script>
+
 
 <!-- 引入 Supabase JS 库 -->
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
