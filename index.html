@@ -75,7 +75,7 @@
         try {
             // 1. 获取 URL 中的参数
             const urlParams = new URLSearchParams(window.location.search);
-            const token = urlParams.get('token');
+            const token = urlParams.get('token') || urlParams.get('code');
             const type = urlParams.get('type') || 'signup';
 
             console.log('参数:', { token, type });
