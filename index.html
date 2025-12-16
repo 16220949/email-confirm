@@ -35,7 +35,7 @@
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3Ym9odHByd25lZ2J1bnJ4bnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQwODY5NjYsImV4cCI6MjA3OTY2Mjk2Nn0.VRek3BsAz0DcGPJDbq3HbDYwSqh4Wj2wU7HPCLBioX4'; // 用 public anon key
 
   async function handleConfirmation() {
-    const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_KEY); // 注意这里用 supabaseJs
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     document.getElementById('loading').style.display = 'block';
     document.getElementById('result').style.display = 'none';
 
